@@ -1,0 +1,44 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.31.0.0
+Copyright (C) 2020 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Renato DC, TATI, LIC=UJWQD-8X6KU-GKTBG-VI8LZ-M63J7-UYQRF
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Plus  Version: 5.31.0.0
+Toolchain Path:  R:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 6 (build 750)
+Assembler:       Armasm.exe V5.06 update 6 (build 750)
+Linker/Locator:  ArmLink.exe V5.06 update 6 (build 750)
+Library Manager: ArmAr.exe V5.06 update 6 (build 750)
+Hex Converter:   FromElf.exe V5.06 update 6 (build 750)
+CPU DLL:         SARMCM3.DLL V5.31.0.0
+Dialog DLL:      DARMP1.DLL V1.27.0.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.7.0
+Dialog DLL:      TARMP1.DLL V1.26.0.0
+ 
+<h2>Project:</h2>
+R:\DEVELOP\Keil_MDK\lpc1768\Template\ByRenato.uvproj
+Project File Date:  10/30/2020
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 6 (build 750)', folder: 'R:\Keil_v5\ARM\ARMCC\Bin'
+Build target 'LPC17xx'
+linking...
+Program Size: Code=17234 RO-data=1046 RW-data=192 ZI-data=4728  
+FromELF: creating hex file...
+After Build - User command #1: C:\Keil_v5\ARM\ARMCC\bin\fromelf.exe --bin --output=ByRenato.bin .\Flash\ByRenato.axf
+*** Error: CreateProcess failed, Command: 'C:\Keil_v5\ARM\ARMCC\bin\fromelf.exe --bin --output=ByRenato.bin .\Flash\ByRenato.axf'
+After Build - User command #2: .\Utilities\Upload.bat
+###############################################     
+Succesful Compilation!, but need to connect USB 
+###############################################  
+".\Flash\ByRenato.axf" - 1 Error(s), 0 Warning(s).
+Target not created.
+Build Time Elapsed:  00:00:01
+</pre>
+</body>
+</html>

@@ -1,0 +1,17 @@
+.\output\sytemclock.o: src\SytemClock.c
+.\output\sytemclock.o: .\inc\Lib.h
+.\output\sytemclock.o: C:\Keil\ARM\ARMCC\bin\..\include\string.h
+.\output\sytemclock.o: C:\Keil\ARM\ARMCC\bin\..\include\stdio.h
+.\output\sytemclock.o: C:\Keil\ARM\Inc\ST\STM32L1xx\stm32l1xx.h
+.\output\sytemclock.o: C:\Keil\ARM\CMSIS\Include\core_cm3.h
+.\output\sytemclock.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\output\sytemclock.o: C:\Keil\ARM\CMSIS\Include\core_cmInstr.h
+.\output\sytemclock.o: C:\Keil\ARM\CMSIS\Include\core_cmFunc.h
+.\output\sytemclock.o: C:\Keil\ARM\Inc\ST\STM32L1xx\system_stm32l1xx.h
+.\output\sytemclock.o: .\inc\Timer.h
+.\output\sytemclock.o: .\inc\Capture.h
+.\output\sytemclock.o: .\inc\Parameters.h
+.\output\sytemclock.o: .\inc\SystemClock.h
+.\output\sytemclock.o: .\inc\SystemTimer.h
+.\output\sytemclock.o: .\inc\Lib.h
+.\output\sytemclock.o: .\inc\Task.h

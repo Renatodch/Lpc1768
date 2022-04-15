@@ -1,0 +1,14 @@
+.\flash\usbhw_1.o: Lib\Usb_Drivers\Src\usbhw.c
+.\flash\usbhw_1.o: C:\Keil_v5\ARM\INC\NXP\LPC17xx\LPC17xx.h
+.\flash\usbhw_1.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm3.h
+.\flash\usbhw_1.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\flash\usbhw_1.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\flash\usbhw_1.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\flash\usbhw_1.o: C:\Keil_v5\ARM\INC\NXP\LPC17xx\system_LPC17xx.h
+.\flash\usbhw_1.o: .\Lib\Usb_Drivers\Inc\usb.h
+.\flash\usbhw_1.o: .\Lib\Drivers\include\lpc_types.h
+.\flash\usbhw_1.o: .\Lib\Usb_Drivers\Inc\usbcfg.h
+.\flash\usbhw_1.o: .\Lib\Usb_Drivers\Inc\usbreg.h
+.\flash\usbhw_1.o: .\Lib\Usb_Drivers\Inc\usbhw.h
+.\flash\usbhw_1.o: .\Lib\Usb_Drivers\Inc\usbcore.h
+.\flash\usbhw_1.o: .\Lib\Usb_Drivers\Inc\usbuser.h

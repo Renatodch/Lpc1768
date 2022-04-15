@@ -1,0 +1,12 @@
+.\flash\debug_frmwrk.o: Lib\Drivers\source\debug_frmwrk.c
+.\flash\debug_frmwrk.o: .\Lib\Drivers\include\debug_frmwrk.h
+.\flash\debug_frmwrk.o: .\Lib\Drivers\include\lpc17xx_uart.h
+.\flash\debug_frmwrk.o: C:\Keil_v5\ARM\INC\NXP\LPC17xx\LPC17xx.h
+.\flash\debug_frmwrk.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm3.h
+.\flash\debug_frmwrk.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\flash\debug_frmwrk.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\flash\debug_frmwrk.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\flash\debug_frmwrk.o: C:\Keil_v5\ARM\INC\NXP\LPC17xx\system_LPC17xx.h
+.\flash\debug_frmwrk.o: .\Lib\Drivers\include\lpc_types.h
+.\flash\debug_frmwrk.o: .\Lib\Drivers\include\lpc17xx_pinsel.h
+.\flash\debug_frmwrk.o: .\Lib\Drivers\include\lpc17xx_libcfg_default.h

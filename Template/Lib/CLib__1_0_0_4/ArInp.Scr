@@ -1,0 +1,13 @@
+--create .\Output\CLib__1_0_0_4.lib
+.\output\capture.o
+.\output\parameters.o
+.\output\pulse.o
+.\output\fifo.o
+.\output\button.o
+.\output\str.o
+.\output\sytemtime.o
+.\output\timer.o
+.\output\bool.o
+.\output\bytes.o
+.\output\utils.o
+.\output\uint32.o

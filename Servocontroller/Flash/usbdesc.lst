@@ -1,0 +1,1682 @@
+L 1 "Lib\Usb_Drivers\Src\usbdesc.c"
+N/*----------------------------------------------------------------------------
+N *      U S B  -  K e r n e l
+N *----------------------------------------------------------------------------
+N * Name:    usbdesc.c
+N * Purpose: USB Descriptors
+N * Version: V1.20
+N *----------------------------------------------------------------------------
+N *      This software is supplied "AS IS" without any warranties, express,
+N *      implied or statutory, including but not limited to the implied
+N *      warranties of fitness for purpose, satisfactory quality and
+N *      noninfringement. Keil extends you a royalty-free right to reproduce
+N *      and distribute executable files created using this software for use
+N *      on NXP Semiconductors LPC microcontroller devices only. Nothing else
+N *      gives you the right to use this software.
+N *
+N * Copyright (c) 2009 Keil - An ARM Company. All rights reserved.
+N *----------------------------------------------------------------------------
+N * History:
+N *          V1.20 Changed string descriptor handling
+N *          V1.00 Initial Version
+N *---------------------------------------------------------------------------*/
+N#include "lpc_types.h"
+L 1 ".\Lib\Drivers\include\lpc_types.h" 1
+N/**********************************************************************
+N* $Id$		lpc_types.h		2008-07-27
+N*//**
+N* @file		lpc_types.h
+N* @brief	Contains the NXP ABL typedefs for C standard types.
+N*     		It is intended to be used in ISO C conforming development
+N*     		environments and checks for this insofar as it is possible
+N*     		to do so.
+N* @version	2.0
+N* @date		27 July. 2008
+N* @author	NXP MCU SW Application Team
+N*
+N* Copyright(C) 2008, NXP Semiconductor
+N* All rights reserved.
+N*
+N***********************************************************************
+N* Software that is described herein is for illustrative purposes only
+N* which provides customers with programming information regarding the
+N* products. This software is supplied "AS IS" without any warranties.
+N* NXP Semiconductors assumes no responsibility or liability for the
+N* use of the software, conveys no license or title under any patent,
+N* copyright, or mask work right to the product. NXP Semiconductors
+N* reserves the right to make changes in the software without
+N* notification. NXP Semiconductors also make no representation or
+N* warranty that such application will be suitable for the specified
+N* use without further testing or modification.
+N* Permission to use, copy, modify, and distribute this software and its
+N* documentation is hereby granted, under NXP Semiconductors'
+N* relevant copyright in the software, without fee, provided that it
+N* is used in conjunction with NXP Semiconductors microcontrollers.  This
+N* copyright, permission, and disclaimer notice must appear in all copies of
+N* this code.
+N**********************************************************************/
+N
+N/* Type group ----------------------------------------------------------- */
+N/** @defgroup LPC_Types LPC_Types
+N * @ingroup LPC1700CMSIS_FwLib_Drivers
+N * @{
+N */
+N
+N#ifndef LPC_TYPES_H
+N#define LPC_TYPES_H
+N
+N/* Includes ------------------------------------------------------------------- */
+N#include <stdint.h>
+L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h" 1
+N/* Copyright (C) ARM Ltd., 1999,2014 */
+N/* All rights reserved */
+N
+N/*
+N * RCS $Revision$
+N * Checkin $Date$
+N * Revising $Author: agrant $
+N */
+N
+N#ifndef __stdint_h
+N#define __stdint_h
+N#define __ARMCLIB_VERSION 5060037
+N
+N  #ifdef __INT64_TYPE__
+S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
+S    #define __INT64 __INT64_TYPE__
+N  #else
+N    /* armcc has builtin '__int64' which can be used in --strict mode */
+N    #define __INT64 __int64
+N    #define __INT64_C_SUFFIX__ ll
+N  #endif
+N  #define __PASTE2(x, y) x ## y
+N  #define __PASTE(x, y) __PASTE2(x, y)
+N  #define __INT64_C(x)  __ESCAPE__(__PASTE(x, __INT64_C_SUFFIX__))
+N  #define __UINT64_C(x)  __ESCAPE__(__PASTE(x ## u, __INT64_C_SUFFIX__))
+N  #if defined(__clang__) || (defined(__ARMCC_VERSION) && !defined(__STRICT_ANSI__))
+X  #if 0L || (1L && !0L)
+N    /* armclang and non-strict armcc allow 'long long' in system headers */
+N    #define __LONGLONG long long
+N  #else
+S    /* strict armcc has '__int64' */
+S    #define __LONGLONG __int64
+N  #endif
+N
+N  #ifndef __STDINT_DECLS
+N  #define __STDINT_DECLS
+N
+N    #undef __CLIBNS
+N
+N    #ifdef __cplusplus
+S      namespace std {
+S          #define __CLIBNS std::
+S          extern "C" {
+N    #else
+N      #define __CLIBNS
+N    #endif  /* __cplusplus */
+N
+N
+N/*
+N * 'signed' is redundant below, except for 'signed char' and if
+N * the typedef is used to declare a bitfield.
+N */
+N
+N    /* 7.18.1.1 */
+N
+N    /* exact-width signed integer types */
+Ntypedef   signed          char int8_t;
+Ntypedef   signed short     int int16_t;
+Ntypedef   signed           int int32_t;
+Ntypedef   signed       __INT64 int64_t;
+Xtypedef   signed       __int64 int64_t;
+N
+N    /* exact-width unsigned integer types */
+Ntypedef unsigned          char uint8_t;
+Ntypedef unsigned short     int uint16_t;
+Ntypedef unsigned           int uint32_t;
+Ntypedef unsigned       __INT64 uint64_t;
+Xtypedef unsigned       __int64 uint64_t;
+N
+N    /* 7.18.1.2 */
+N
+N    /* smallest type of at least n bits */
+N    /* minimum-width signed integer types */
+Ntypedef   signed          char int_least8_t;
+Ntypedef   signed short     int int_least16_t;
+Ntypedef   signed           int int_least32_t;
+Ntypedef   signed       __INT64 int_least64_t;
+Xtypedef   signed       __int64 int_least64_t;
+N
+N    /* minimum-width unsigned integer types */
+Ntypedef unsigned          char uint_least8_t;
+Ntypedef unsigned short     int uint_least16_t;
+Ntypedef unsigned           int uint_least32_t;
+Ntypedef unsigned       __INT64 uint_least64_t;
+Xtypedef unsigned       __int64 uint_least64_t;
+N
+N    /* 7.18.1.3 */
+N
+N    /* fastest minimum-width signed integer types */
+Ntypedef   signed           int int_fast8_t;
+Ntypedef   signed           int int_fast16_t;
+Ntypedef   signed           int int_fast32_t;
+Ntypedef   signed       __INT64 int_fast64_t;
+Xtypedef   signed       __int64 int_fast64_t;
+N
+N    /* fastest minimum-width unsigned integer types */
+Ntypedef unsigned           int uint_fast8_t;
+Ntypedef unsigned           int uint_fast16_t;
+Ntypedef unsigned           int uint_fast32_t;
+Ntypedef unsigned       __INT64 uint_fast64_t;
+Xtypedef unsigned       __int64 uint_fast64_t;
+N
+N    /* 7.18.1.4 integer types capable of holding object pointers */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+Stypedef   signed       __INT64 intptr_t;
+Stypedef unsigned       __INT64 uintptr_t;
+N#else
+Ntypedef   signed           int intptr_t;
+Ntypedef unsigned           int uintptr_t;
+N#endif
+N
+N    /* 7.18.1.5 greatest-width integer types */
+Ntypedef   signed     __LONGLONG intmax_t;
+Xtypedef   signed     long long intmax_t;
+Ntypedef unsigned     __LONGLONG uintmax_t;
+Xtypedef unsigned     long long uintmax_t;
+N
+N
+N#if !defined(__cplusplus) || defined(__STDC_LIMIT_MACROS)
+X#if !0L || 0L
+N
+N    /* 7.18.2.1 */
+N
+N    /* minimum values of exact-width signed integer types */
+N#define INT8_MIN                   -128
+N#define INT16_MIN                -32768
+N#define INT32_MIN          (~0x7fffffff)   /* -2147483648 is unsigned */
+N#define INT64_MIN  __INT64_C(~0x7fffffffffffffff) /* -9223372036854775808 is unsigned */
+N
+N    /* maximum values of exact-width signed integer types */
+N#define INT8_MAX                    127
+N#define INT16_MAX                 32767
+N#define INT32_MAX            2147483647
+N#define INT64_MAX  __INT64_C(9223372036854775807)
+N
+N    /* maximum values of exact-width unsigned integer types */
+N#define UINT8_MAX                   255
+N#define UINT16_MAX                65535
+N#define UINT32_MAX           4294967295u
+N#define UINT64_MAX __UINT64_C(18446744073709551615)
+N
+N    /* 7.18.2.2 */
+N
+N    /* minimum values of minimum-width signed integer types */
+N#define INT_LEAST8_MIN                   -128
+N#define INT_LEAST16_MIN                -32768
+N#define INT_LEAST32_MIN          (~0x7fffffff)
+N#define INT_LEAST64_MIN  __INT64_C(~0x7fffffffffffffff)
+N
+N    /* maximum values of minimum-width signed integer types */
+N#define INT_LEAST8_MAX                    127
+N#define INT_LEAST16_MAX                 32767
+N#define INT_LEAST32_MAX            2147483647
+N#define INT_LEAST64_MAX  __INT64_C(9223372036854775807)
+N
+N    /* maximum values of minimum-width unsigned integer types */
+N#define UINT_LEAST8_MAX                   255
+N#define UINT_LEAST16_MAX                65535
+N#define UINT_LEAST32_MAX           4294967295u
+N#define UINT_LEAST64_MAX __UINT64_C(18446744073709551615)
+N
+N    /* 7.18.2.3 */
+N
+N    /* minimum values of fastest minimum-width signed integer types */
+N#define INT_FAST8_MIN           (~0x7fffffff)
+N#define INT_FAST16_MIN          (~0x7fffffff)
+N#define INT_FAST32_MIN          (~0x7fffffff)
+N#define INT_FAST64_MIN  __INT64_C(~0x7fffffffffffffff)
+N
+N    /* maximum values of fastest minimum-width signed integer types */
+N#define INT_FAST8_MAX             2147483647
+N#define INT_FAST16_MAX            2147483647
+N#define INT_FAST32_MAX            2147483647
+N#define INT_FAST64_MAX  __INT64_C(9223372036854775807)
+N
+N    /* maximum values of fastest minimum-width unsigned integer types */
+N#define UINT_FAST8_MAX            4294967295u
+N#define UINT_FAST16_MAX           4294967295u
+N#define UINT_FAST32_MAX           4294967295u
+N#define UINT_FAST64_MAX __UINT64_C(18446744073709551615)
+N
+N    /* 7.18.2.4 */
+N
+N    /* minimum value of pointer-holding signed integer type */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define INTPTR_MIN INT64_MIN
+N#else
+N#define INTPTR_MIN INT32_MIN
+N#endif
+N
+N    /* maximum value of pointer-holding signed integer type */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define INTPTR_MAX INT64_MAX
+N#else
+N#define INTPTR_MAX INT32_MAX
+N#endif
+N
+N    /* maximum value of pointer-holding unsigned integer type */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define UINTPTR_MAX UINT64_MAX
+N#else
+N#define UINTPTR_MAX UINT32_MAX
+N#endif
+N
+N    /* 7.18.2.5 */
+N
+N    /* minimum value of greatest-width signed integer type */
+N#define INTMAX_MIN  __ESCAPE__(~0x7fffffffffffffffll)
+N
+N    /* maximum value of greatest-width signed integer type */
+N#define INTMAX_MAX  __ESCAPE__(9223372036854775807ll)
+N
+N    /* maximum value of greatest-width unsigned integer type */
+N#define UINTMAX_MAX __ESCAPE__(18446744073709551615ull)
+N
+N    /* 7.18.3 */
+N
+N    /* limits of ptrdiff_t */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define PTRDIFF_MIN INT64_MIN
+S#define PTRDIFF_MAX INT64_MAX
+N#else
+N#define PTRDIFF_MIN INT32_MIN
+N#define PTRDIFF_MAX INT32_MAX
+N#endif
+N
+N    /* limits of sig_atomic_t */
+N#define SIG_ATOMIC_MIN (~0x7fffffff)
+N#define SIG_ATOMIC_MAX   2147483647
+N
+N    /* limit of size_t */
+N#if __sizeof_ptr == 8
+X#if 4 == 8
+S#define SIZE_MAX UINT64_MAX
+N#else
+N#define SIZE_MAX UINT32_MAX
+N#endif
+N
+N    /* limits of wchar_t */
+N    /* NB we have to undef and redef because they're defined in both
+N     * stdint.h and wchar.h */
+N#undef WCHAR_MIN
+N#undef WCHAR_MAX
+N
+N#if defined(__WCHAR32) || (defined(__ARM_SIZEOF_WCHAR_T) && __ARM_SIZEOF_WCHAR_T == 4)
+X#if 0L || (0L && __ARM_SIZEOF_WCHAR_T == 4)
+S  #define WCHAR_MIN   0
+S  #define WCHAR_MAX   0xffffffffU
+N#else
+N  #define WCHAR_MIN   0
+N  #define WCHAR_MAX   65535
+N#endif
+N
+N    /* limits of wint_t */
+N#define WINT_MIN (~0x7fffffff)
+N#define WINT_MAX 2147483647
+N
+N#endif /* __STDC_LIMIT_MACROS */
+N
+N#if !defined(__cplusplus) || defined(__STDC_CONSTANT_MACROS)
+X#if !0L || 0L
+N
+N    /* 7.18.4.1 macros for minimum-width integer constants */
+N#define INT8_C(x)   (x)
+N#define INT16_C(x)  (x)
+N#define INT32_C(x)  (x)
+N#define INT64_C(x)  __INT64_C(x)
+N
+N#define UINT8_C(x)  (x ## u)
+N#define UINT16_C(x) (x ## u)
+N#define UINT32_C(x) (x ## u)
+N#define UINT64_C(x) __UINT64_C(x)
+N
+N    /* 7.18.4.2 macros for greatest-width integer constants */
+N#define INTMAX_C(x)  __ESCAPE__(x ## ll)
+N#define UINTMAX_C(x) __ESCAPE__(x ## ull)
+N
+N#endif /* __STDC_CONSTANT_MACROS */
+N
+N    #ifdef __cplusplus
+S         }  /* extern "C" */
+S      }  /* namespace std */
+N    #endif /* __cplusplus */
+N  #endif /* __STDINT_DECLS */
+N
+N  #ifdef __cplusplus
+S    #ifndef __STDINT_NO_EXPORTS
+S      using ::std::int8_t;
+S      using ::std::int16_t;
+S      using ::std::int32_t;
+S      using ::std::int64_t;
+S      using ::std::uint8_t;
+S      using ::std::uint16_t;
+S      using ::std::uint32_t;
+S      using ::std::uint64_t;
+S      using ::std::int_least8_t;
+S      using ::std::int_least16_t;
+S      using ::std::int_least32_t;
+S      using ::std::int_least64_t;
+S      using ::std::uint_least8_t;
+S      using ::std::uint_least16_t;
+S      using ::std::uint_least32_t;
+S      using ::std::uint_least64_t;
+S      using ::std::int_fast8_t;
+S      using ::std::int_fast16_t;
+S      using ::std::int_fast32_t;
+S      using ::std::int_fast64_t;
+S      using ::std::uint_fast8_t;
+S      using ::std::uint_fast16_t;
+S      using ::std::uint_fast32_t;
+S      using ::std::uint_fast64_t;
+S      using ::std::intptr_t;
+S      using ::std::uintptr_t;
+S      using ::std::intmax_t;
+S      using ::std::uintmax_t;
+S    #endif
+N  #endif /* __cplusplus */
+N
+N#undef __INT64
+N#undef __LONGLONG
+N
+N#endif /* __stdint_h */
+N
+N/* end of stdint.h */
+L 46 ".\Lib\Drivers\include\lpc_types.h" 2
+N
+N
+N/* Public Types --------------------------------------------------------------- */
+N/** @defgroup LPC_Types_Public_Types LPC_Types Public Types
+N * @{
+N */
+N
+N/**
+N * @brief Boolean Type definition
+N */
+Ntypedef enum {FALSE = 0, TRUE = !FALSE} Bool;
+N
+N/**
+N * @brief Flag Status and Interrupt Flag Status type definition
+N */
+Ntypedef enum {RESET = 0, SET = !RESET} FlagStatus, IntStatus, SetState;
+N#define PARAM_SETSTATE(State) ((State==RESET) || (State==SET))
+N
+N/**
+N * @brief Functional State Definition
+N */
+Ntypedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
+N#define PARAM_FUNCTIONALSTATE(State) ((State==DISABLE) || (State==ENABLE))
+N
+N/**
+N * @ Status type definition
+N */
+Ntypedef enum {ERROR = 0, SUCCESS = !ERROR} Status;
+N
+N
+N/**
+N * Read/Write transfer type mode (Block or non-block)
+N */
+Ntypedef enum
+N{
+N	NONE_BLOCKING = 0,		/**< None Blocking type */
+N	BLOCKING				/**< Blocking type */
+N} TRANSFER_BLOCK_Type;
+N
+N
+N/** Pointer to Function returning Void (any number of parameters) */
+Ntypedef void (*PFV)();
+N
+N/** Pointer to Function returning int32_t (any number of parameters) */
+Ntypedef int32_t(*PFI)();
+N
+N/**
+N * @}
+N */
+N
+N
+N/* Public Macros -------------------------------------------------------------- */
+N/** @defgroup LPC_Types_Public_Macros  LPC_Types Public Macros
+N * @{
+N */
+N
+N/* _BIT(n) sets the bit at position "n"
+N * _BIT(n) is intended to be used in "OR" and "AND" expressions:
+N * e.g., "(_BIT(3) | _BIT(7))".
+N */
+N#undef _BIT
+N/* Set bit macro */
+N#define _BIT(n)	(1<<n)
+N
+N/* _SBF(f,v) sets the bit field starting at position "f" to value "v".
+N * _SBF(f,v) is intended to be used in "OR" and "AND" expressions:
+N * e.g., "((_SBF(5,7) | _SBF(12,0xF)) & 0xFFFF)"
+N */
+N#undef _SBF
+N/* Set bit field macro */
+N#define _SBF(f,v) (v<<f)
+N
+N/* _BITMASK constructs a symbol with 'field_width' least significant
+N * bits set.
+N * e.g., _BITMASK(5) constructs '0x1F', _BITMASK(16) == 0xFFFF
+N * The symbol is intended to be used to limit the bit field width
+N * thusly:
+N * <a_register> = (any_expression) & _BITMASK(x), where 0 < x <= 32.
+N * If "any_expression" results in a value that is larger than can be
+N * contained in 'x' bits, the bits above 'x - 1' are masked off.  When
+N * used with the _SBF example above, the example would be written:
+N * a_reg = ((_SBF(5,7) | _SBF(12,0xF)) & _BITMASK(16))
+N * This ensures that the value written to a_reg is no wider than
+N * 16 bits, and makes the code easier to read and understand.
+N */
+N#undef _BITMASK
+N/* Bitmask creation macro */
+N#define _BITMASK(field_width) ( _BIT(field_width) - 1)
+N
+N/* NULL pointer */
+N#ifndef NULL
+N#define NULL ((void*) 0)
+N#endif
+N
+N/* Number of elements in an array */
+N#define NELEMENTS(array)  (sizeof (array) / sizeof (array[0]))
+N
+N/* Static data/function define */
+N#define STATIC static
+N/* External data/function define */
+N#define EXTERN extern
+N
+N#if !defined(MAX)
+X#if !0L
+N#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+N#endif
+N#if !defined(MIN)
+X#if !0L
+N#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+N#endif
+N
+N/**
+N * @}
+N */
+N
+N
+N/* Old Type Definition compatibility ------------------------------------------ */
+N/** @addtogroup LPC_Types_Public_Types LPC_Types Public Types
+N * @{
+N */
+N
+N/** SMA type for character type */
+Ntypedef char CHAR;
+N
+N/** SMA type for 8 bit unsigned value */
+Ntypedef uint8_t UNS_8;
+N
+N/** SMA type for 8 bit signed value */
+Ntypedef int8_t INT_8;
+N
+N/** SMA type for 16 bit unsigned value */
+Ntypedef	uint16_t UNS_16;
+N
+N/** SMA type for 16 bit signed value */
+Ntypedef	int16_t INT_16;
+N
+N/** SMA type for 32 bit unsigned value */
+Ntypedef	uint32_t UNS_32;
+N
+N/** SMA type for 32 bit signed value */
+Ntypedef	int32_t INT_32;
+N
+N/** SMA type for 64 bit signed value */
+Ntypedef int64_t INT_64;
+N
+N/** SMA type for 64 bit unsigned value */
+Ntypedef uint64_t UNS_64;
+N
+N/** 32 bit boolean type */
+Ntypedef Bool BOOL_32;
+N
+N/** 16 bit boolean type */
+Ntypedef Bool BOOL_16;
+N
+N/** 8 bit boolean type */
+Ntypedef Bool BOOL_8;
+N
+N/**
+N * @}
+N */
+N
+N
+N#endif /* LPC_TYPES_H */
+N
+N/**
+N * @}
+N */
+N
+N/* --------------------------------- End Of File ------------------------------ */
+L 23 "Lib\Usb_Drivers\Src\usbdesc.c" 2
+N#include "usb.h"
+L 1 ".\Lib\Usb_Drivers\Inc\usb.h" 1
+N/*----------------------------------------------------------------------------
+N *      U S B  -  K e r n e l
+N *----------------------------------------------------------------------------
+N * Name:    usb.h
+N * Purpose: USB Definitions
+N * Version: V1.20
+N *----------------------------------------------------------------------------
+N *      This software is supplied "AS IS" without any warranties, express,
+N *      implied or statutory, including but not limited to the implied
+N *      warranties of fitness for purpose, satisfactory quality and
+N *      noninfringement. Keil extends you a royalty-free right to reproduce
+N *      and distribute executable files created using this software for use
+N *      on NXP Semiconductors LPC family microcontroller devices only. Nothing
+N *      else gives you the right to use this software.
+N *
+N * Copyright (c) 2009 Keil - An ARM Company. All rights reserved.
+N *---------------------------------------------------------------------------*/
+N
+N#ifndef __USB_H__
+N#define __USB_H__
+N#include "lpc_types.h"
+N
+N#if defined   (  __GNUC__  )
+X#if 0L
+S#define __packed __attribute__((__packed__))
+N#endif
+N
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed union {
+N#elif defined   (  __GNUC__  )
+Stypedef union __packed {
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef union {
+N#endif
+N  uint16_t W;
+N#if defined     (  __CC_ARM  )
+X#if 1L
+N  __packed struct {
+N#elif defined   (  __GNUC__  )
+S  struct __packed {
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+S  struct {
+N#endif
+N    uint8_t L;
+N    uint8_t H;
+N  } WB;
+N#ifdef __IAR_SYSTEMS_ICC__
+S#pragma pack()
+N#endif
+N} WORD_BYTE;
+N#ifdef __IAR_SYSTEMS_ICC__
+S#pragma pack()
+N#endif
+N
+N
+N/* bmRequestType.Dir */
+N#define REQUEST_HOST_TO_DEVICE     0
+N#define REQUEST_DEVICE_TO_HOST     1
+N
+N/* bmRequestType.Type */
+N#define REQUEST_STANDARD           0
+N#define REQUEST_CLASS              1
+N#define REQUEST_VENDOR             2
+N#define REQUEST_RESERVED           3
+N
+N/* bmRequestType.Recipient */
+N#define REQUEST_TO_DEVICE          0
+N#define REQUEST_TO_INTERFACE       1
+N#define REQUEST_TO_ENDPOINT        2
+N#define REQUEST_TO_OTHER           3
+N
+N/* bmRequestType Definition */
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed union _REQUEST_TYPE {
+N#elif defined   (  __GNUC__  )
+Stypedef union __packed _REQUEST_TYPE {
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef union _REQUEST_TYPE {
+N#endif
+N#if defined     (  __CC_ARM  )
+X#if 1L
+N	__packed struct _BM {
+N#elif defined   (  __GNUC__  )
+S	struct __packed _BM {
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+S	struct _BM {
+N#endif
+N    uint8_t Recipient : 5;
+N    uint8_t Type      : 2;
+N    uint8_t Dir       : 1;
+N  } BM;
+N#ifdef __IAR_SYSTEMS_ICC__
+S#pragma pack()
+N#endif
+N  uint8_t B;
+N} REQUEST_TYPE;
+N#ifdef __IAR_SYSTEMS_ICC__
+S#pragma pack()
+N#endif
+N
+N/* USB Standard Request Codes */
+N#define USB_REQUEST_GET_STATUS                 0
+N#define USB_REQUEST_CLEAR_FEATURE              1
+N#define USB_REQUEST_SET_FEATURE                3
+N#define USB_REQUEST_SET_ADDRESS                5
+N#define USB_REQUEST_GET_DESCRIPTOR             6
+N#define USB_REQUEST_SET_DESCRIPTOR             7
+N#define USB_REQUEST_GET_CONFIGURATION          8
+N#define USB_REQUEST_SET_CONFIGURATION          9
+N#define USB_REQUEST_GET_INTERFACE              10
+N#define USB_REQUEST_SET_INTERFACE              11
+N#define USB_REQUEST_SYNC_FRAME                 12
+N
+N/* USB GET_STATUS Bit Values */
+N#define USB_GETSTATUS_SELF_POWERED             0x01
+N#define USB_GETSTATUS_REMOTE_WAKEUP            0x02
+N#define USB_GETSTATUS_ENDPOINT_STALL           0x01
+N
+N/* USB Standard Feature selectors */
+N#define USB_FEATURE_ENDPOINT_STALL             0
+N#define USB_FEATURE_REMOTE_WAKEUP              1
+N
+N/* USB Default Control Pipe Setup Packet */
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _USB_SETUP_PACKET {
+N#elif defined   (  __GNUC__  )
+Stypedef struct __packed _USB_SETUP_PACKET {
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _USB_SETUP_PACKET {
+N#endif
+N  REQUEST_TYPE bmRequestType;
+N  uint8_t         bRequest;
+N  WORD_BYTE    wValue;
+N  WORD_BYTE    wIndex;
+N  uint16_t         wLength;
+N} USB_SETUP_PACKET;
+N#ifdef __IAR_SYSTEMS_ICC__
+S#pragma pack()
+N#endif
+N
+N
+N/* USB Descriptor Types */
+N#define USB_DEVICE_DESCRIPTOR_TYPE             1
+N#define USB_CONFIGURATION_DESCRIPTOR_TYPE      2
+N#define USB_STRING_DESCRIPTOR_TYPE             3
+N#define USB_INTERFACE_DESCRIPTOR_TYPE          4
+N#define USB_ENDPOINT_DESCRIPTOR_TYPE           5
+N#define USB_DEVICE_QUALIFIER_DESCRIPTOR_TYPE   6
+N#define USB_OTHER_SPEED_CONFIG_DESCRIPTOR_TYPE 7
+N#define USB_INTERFACE_POWER_DESCRIPTOR_TYPE    8
+N#define USB_OTG_DESCRIPTOR_TYPE                     9
+N#define USB_DEBUG_DESCRIPTOR_TYPE                  10
+N#define USB_INTERFACE_ASSOCIATION_DESCRIPTOR_TYPE  11
+N
+N/* USB Device Classes */
+N#define USB_DEVICE_CLASS_RESERVED              0x00
+N#define USB_DEVICE_CLASS_AUDIO                 0x01
+N#define USB_DEVICE_CLASS_COMMUNICATIONS        0x02
+N#define USB_DEVICE_CLASS_HUMAN_INTERFACE       0x03
+N#define USB_DEVICE_CLASS_MONITOR               0x04
+N#define USB_DEVICE_CLASS_PHYSICAL_INTERFACE    0x05
+N#define USB_DEVICE_CLASS_POWER                 0x06
+N#define USB_DEVICE_CLASS_PRINTER               0x07
+N#define USB_DEVICE_CLASS_STORAGE               0x08
+N#define USB_DEVICE_CLASS_HUB                   0x09
+N#define USB_DEVICE_CLASS_MISCELLANEOUS         0xEF
+N#define USB_DEVICE_CLASS_VENDOR_SPECIFIC       0xFF
+N
+N/* bmAttributes in Configuration Descriptor */
+N#define USB_CONFIG_POWERED_MASK                0x40
+N#define USB_CONFIG_BUS_POWERED                 0x80
+N#define USB_CONFIG_SELF_POWERED                0xC0
+N#define USB_CONFIG_REMOTE_WAKEUP               0x20
+N
+N/* bMaxPower in Configuration Descriptor */
+N#define USB_CONFIG_POWER_MA(mA)                ((mA)/2)
+N
+N/* bEndpointAddress in Endpoint Descriptor */
+N#define USB_ENDPOINT_DIRECTION_MASK            0x80
+N#define USB_ENDPOINT_OUT(addr)                 ((addr) | 0x00)
+N#define USB_ENDPOINT_IN(addr)                  ((addr) | 0x80)
+N
+N/* bmAttributes in Endpoint Descriptor */
+N#define USB_ENDPOINT_TYPE_MASK                 0x03
+N#define USB_ENDPOINT_TYPE_CONTROL              0x00
+N#define USB_ENDPOINT_TYPE_ISOCHRONOUS          0x01
+N#define USB_ENDPOINT_TYPE_BULK                 0x02
+N#define USB_ENDPOINT_TYPE_INTERRUPT            0x03
+N#define USB_ENDPOINT_SYNC_MASK                 0x0C
+N#define USB_ENDPOINT_SYNC_NO_SYNCHRONIZATION   0x00
+N#define USB_ENDPOINT_SYNC_ASYNCHRONOUS         0x04
+N#define USB_ENDPOINT_SYNC_ADAPTIVE             0x08
+N#define USB_ENDPOINT_SYNC_SYNCHRONOUS          0x0C
+N#define USB_ENDPOINT_USAGE_MASK                0x30
+N#define USB_ENDPOINT_USAGE_DATA                0x00
+N#define USB_ENDPOINT_USAGE_FEEDBACK            0x10
+N#define USB_ENDPOINT_USAGE_IMPLICIT_FEEDBACK   0x20
+N#define USB_ENDPOINT_USAGE_RESERVED            0x30
+N
+N/* USB Standard Device Descriptor */
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _USB_DEVICE_DESCRIPTOR {
+N#elif defined   (  __GNUC__  )
+Stypedef struct __packed _USB_DEVICE_DESCRIPTOR {
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _USB_DEVICE_DESCRIPTOR {
+N#endif
+N  uint8_t  bLength;
+N  uint8_t  bDescriptorType;
+N  uint16_t  bcdUSB;
+N  uint8_t  bDeviceClass;
+N  uint8_t  bDeviceSubClass;
+N  uint8_t  bDeviceProtocol;
+N  uint8_t  bMaxPacketSize0;
+N  uint16_t  idVendor;
+N  uint16_t  idProduct;
+N  uint16_t  bcdDevice;
+N  uint8_t  iManufacturer;
+N  uint8_t  iProduct;
+N  uint8_t  iSerialNumber;
+N  uint8_t  bNumConfigurations;
+N} USB_DEVICE_DESCRIPTOR;
+N#ifdef __IAR_SYSTEMS_ICC__
+S#pragma pack()
+N#endif
+N
+N/* USB 2.0 Device Qualifier Descriptor */
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _USB_DEVICE_QUALIFIER_DESCRIPTOR {
+N#elif defined   (  __GNUC__  )
+Stypedef struct __packed _USB_DEVICE_QUALIFIER_DESCRIPTOR {
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _USB_DEVICE_QUALIFIER_DESCRIPTOR {
+N#endif
+N  uint8_t  bLength;
+N  uint8_t  bDescriptorType;
+N  uint16_t  bcdUSB;
+N  uint8_t  bDeviceClass;
+N  uint8_t  bDeviceSubClass;
+N  uint8_t  bDeviceProtocol;
+N  uint8_t  bMaxPacketSize0;
+N  uint8_t  bNumConfigurations;
+N  uint8_t  bReserved;
+N} USB_DEVICE_QUALIFIER_DESCRIPTOR;
+N#ifdef __IAR_SYSTEMS_ICC__
+S#pragma pack()
+N#endif
+N
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _USB_CONFIGURATION_DESCRIPTOR {
+N#elif defined   (  __GNUC__  )
+Stypedef struct __packed _USB_CONFIGURATION_DESCRIPTOR {
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _USB_CONFIGURATION_DESCRIPTOR {
+N#endif
+N  uint8_t  bLength;
+N  uint8_t  bDescriptorType;
+N  uint16_t  wTotalLength;
+N  uint8_t  bNumInterfaces;
+N  uint8_t  bConfigurationValue;
+N  uint8_t  iConfiguration;
+N  uint8_t  bmAttributes;
+N  uint8_t  bMaxPower;
+N} USB_CONFIGURATION_DESCRIPTOR;
+N#ifdef __IAR_SYSTEMS_ICC__
+S#pragma pack()
+N#endif
+N
+N/* USB Standard Interface Descriptor */
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _USB_INTERFACE_DESCRIPTOR {
+N#elif defined   (  __GNUC__  )
+Stypedef struct __packed _USB_INTERFACE_DESCRIPTOR {
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _USB_INTERFACE_DESCRIPTOR {
+N#endif
+N  uint8_t  bLength;
+N  uint8_t  bDescriptorType;
+N  uint8_t  bInterfaceNumber;
+N  uint8_t  bAlternateSetting;
+N  uint8_t  bNumEndpoints;
+N  uint8_t  bInterfaceClass;
+N  uint8_t  bInterfaceSubClass;
+N  uint8_t  bInterfaceProtocol;
+N  uint8_t  iInterface;
+N} USB_INTERFACE_DESCRIPTOR;
+N#ifdef __IAR_SYSTEMS_ICC__
+S#pragma pack()
+N#endif
+N
+N/* USB Standard Endpoint Descriptor */
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _USB_ENDPOINT_DESCRIPTOR {
+N#elif defined   (  __GNUC__  )
+Stypedef struct __packed _USB_ENDPOINT_DESCRIPTOR {
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _USB_ENDPOINT_DESCRIPTOR {
+N#endif
+N  uint8_t  bLength;
+N  uint8_t  bDescriptorType;
+N  uint8_t  bEndpointAddress;
+N  uint8_t  bmAttributes;
+N  uint16_t  wMaxPacketSize;
+N  uint8_t  bInterval;
+N} USB_ENDPOINT_DESCRIPTOR;
+N#ifdef __IAR_SYSTEMS_ICC__
+S#pragma pack()
+N#endif
+N
+N/* USB String Descriptor */
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _USB_STRING_DESCRIPTOR {
+N#elif defined   (  __GNUC__  )
+Stypedef struct __packed _USB_STRING_DESCRIPTOR {
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _USB_STRING_DESCRIPTOR {
+N#endif
+N  uint8_t  bLength;
+N  uint8_t  bDescriptorType;
+N  uint16_t  bString/*[]*/;
+N} USB_STRING_DESCRIPTOR;
+N#ifdef __IAR_SYSTEMS_ICC__
+S#pragma pack()
+N#endif
+N
+N/* USB Common Descriptor */
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _USB_COMMON_DESCRIPTOR {
+N#elif defined   (  __GNUC__  )
+Stypedef struct __packed _USB_COMMON_DESCRIPTOR {
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _USB_COMMON_DESCRIPTOR {
+N#endif
+N  uint8_t  bLength;
+N  uint8_t  bDescriptorType;
+N} USB_COMMON_DESCRIPTOR;
+N#ifdef __IAR_SYSTEMS_ICC__
+S#pragma pack()
+N#endif
+N
+N
+N
+N#endif  /* __USB_H__ */
+L 24 "Lib\Usb_Drivers\Src\usbdesc.c" 2
+N#include "cdc.h"
+L 1 ".\Lib\Usb_Drivers\Inc\cdc.h" 1
+N/*----------------------------------------------------------------------------
+N *      U S B  -  K e r n e l
+N *----------------------------------------------------------------------------
+N *      Name:    CDC.h
+N *      Purpose: USB Communication Device Class Definitions
+N * Version: V1.20
+N *----------------------------------------------------------------------------
+N *      This software is supplied "AS IS" without any warranties, express,
+N *      implied or statutory, including but not limited to the implied
+N *      warranties of fitness for purpose, satisfactory quality and
+N *      noninfringement. Keil extends you a royalty-free right to reproduce
+N *      and distribute executable files created using this software for use
+N *      on NXP Semiconductors LPC family microcontroller devices only. Nothing
+N *      else gives you the right to use this software.
+N *
+N * Copyright (c) 2009 Keil - An ARM Company. All rights reserved.
+N *---------------------------------------------------------------------------*/
+N
+N#ifndef __CDC_H
+N#define __CDC_H
+N#include "lpc_types.h"
+N
+N#if defined   (  __GNUC__  )
+X#if 0L
+S#define __packed __attribute__((__packed__))
+N#endif
+N/*----------------------------------------------------------------------------
+N *      Definitions  based on usbcdc11.pdf (www.usb.org)
+N *---------------------------------------------------------------------------*/
+N// Communication device class specification version 1.10
+N#define CDC_V1_10                               0x0110
+N
+N// Communication interface class code
+N// (usbcdc11.pdf, 4.2, Table 15)
+N#define CDC_COMMUNICATION_INTERFACE_CLASS       0x02
+N
+N// Communication interface class subclass codes
+N// (usbcdc11.pdf, 4.3, Table 16)
+N#define CDC_DIRECT_LINE_CONTROL_MODEL           0x01
+N#define CDC_ABSTRACT_CONTROL_MODEL              0x02
+N#define CDC_TELEPHONE_CONTROL_MODEL             0x03
+N#define CDC_MULTI_CHANNEL_CONTROL_MODEL         0x04
+N#define CDC_CAPI_CONTROL_MODEL                  0x05
+N#define CDC_ETHERNET_NETWORKING_CONTROL_MODEL   0x06
+N#define CDC_ATM_NETWORKING_CONTROL_MODEL        0x07
+N
+N// Communication interface class control protocol codes
+N// (usbcdc11.pdf, 4.4, Table 17)
+N#define CDC_PROTOCOL_COMMON_AT_COMMANDS         0x01
+N
+N// Data interface class code
+N// (usbcdc11.pdf, 4.5, Table 18)
+N#define CDC_DATA_INTERFACE_CLASS                0x0A
+N
+N// Data interface class protocol codes
+N// (usbcdc11.pdf, 4.7, Table 19)
+N#define CDC_PROTOCOL_ISDN_BRI                   0x30
+N#define CDC_PROTOCOL_HDLC                       0x31
+N#define CDC_PROTOCOL_TRANSPARENT                0x32
+N#define CDC_PROTOCOL_Q921_MANAGEMENT            0x50
+N#define CDC_PROTOCOL_Q921_DATA_LINK             0x51
+N#define CDC_PROTOCOL_Q921_MULTIPLEXOR           0x52
+N#define CDC_PROTOCOL_V42                        0x90
+N#define CDC_PROTOCOL_EURO_ISDN                  0x91
+N#define CDC_PROTOCOL_V24_RATE_ADAPTATION        0x92
+N#define CDC_PROTOCOL_CAPI                       0x93
+N#define CDC_PROTOCOL_HOST_BASED_DRIVER          0xFD
+N#define CDC_PROTOCOL_DESCRIBED_IN_PUFD          0xFE
+N
+N// Type values for bDescriptorType field of functional descriptors
+N// (usbcdc11.pdf, 5.2.3, Table 24)
+N#define CDC_CS_INTERFACE                        0x24
+N#define CDC_CS_ENDPOINT                         0x25
+N
+N// Type values for bDescriptorSubtype field of functional descriptors
+N// (usbcdc11.pdf, 5.2.3, Table 25)
+N#define CDC_HEADER                              0x00
+N#define CDC_CALL_MANAGEMENT                     0x01
+N#define CDC_ABSTRACT_CONTROL_MANAGEMENT         0x02
+N#define CDC_DIRECT_LINE_MANAGEMENT              0x03
+N#define CDC_TELEPHONE_RINGER                    0x04
+N#define CDC_REPORTING_CAPABILITIES              0x05
+N#define CDC_UNION                               0x06
+N#define CDC_COUNTRY_SELECTION                   0x07
+N#define CDC_TELEPHONE_OPERATIONAL_MODES         0x08
+N#define CDC_USB_TERMINAL                        0x09
+N#define CDC_NETWORK_CHANNEL                     0x0A
+N#define CDC_PROTOCOL_UNIT                       0x0B
+N#define CDC_EXTENSION_UNIT                      0x0C
+N#define CDC_MULTI_CHANNEL_MANAGEMENT            0x0D
+N#define CDC_CAPI_CONTROL_MANAGEMENT             0x0E
+N#define CDC_ETHERNET_NETWORKING                 0x0F
+N#define CDC_ATM_NETWORKING                      0x10
+N
+N// CDC class-specific request codes
+N// (usbcdc11.pdf, 6.2, Table 46)
+N// see Table 45 for info about the specific requests.
+N#define CDC_SEND_ENCAPSULATED_COMMAND           0x00
+N#define CDC_GET_ENCAPSULATED_RESPONSE           0x01
+N#define CDC_SET_COMM_FEATURE                    0x02
+N#define CDC_GET_COMM_FEATURE                    0x03
+N#define CDC_CLEAR_COMM_FEATURE                  0x04
+N#define CDC_SET_AUX_LINE_STATE                  0x10
+N#define CDC_SET_HOOK_STATE                      0x11
+N#define CDC_PULSE_SETUP                         0x12
+N#define CDC_SEND_PULSE                          0x13
+N#define CDC_SET_PULSE_TIME                      0x14
+N#define CDC_RING_AUX_JACK                       0x15
+N#define CDC_SET_LINE_CODING                     0x20
+N#define CDC_GET_LINE_CODING                     0x21
+N#define CDC_SET_CONTROL_LINE_STATE              0x22
+N#define CDC_SEND_BREAK                          0x23
+N#define CDC_SET_RINGER_PARMS                    0x30
+N#define CDC_GET_RINGER_PARMS                    0x31
+N#define CDC_SET_OPERATION_PARMS                 0x32
+N#define CDC_GET_OPERATION_PARMS                 0x33
+N#define CDC_SET_LINE_PARMS                      0x34
+N#define CDC_GET_LINE_PARMS                      0x35
+N#define CDC_DIAL_DIGITS                         0x36
+N#define CDC_SET_UNIT_PARAMETER                  0x37
+N#define CDC_GET_UNIT_PARAMETER                  0x38
+N#define CDC_CLEAR_UNIT_PARAMETER                0x39
+N#define CDC_GET_PROFILE                         0x3A
+N#define CDC_SET_ETHERNET_MULTICAST_FILTERS      0x40
+N#define CDC_SET_ETHERNET_PMP_FILTER             0x41
+N#define CDC_GET_ETHERNET_PMP_FILTER             0x42
+N#define CDC_SET_ETHERNET_PACKET_FILTER          0x43
+N#define CDC_GET_ETHERNET_STATISTIC              0x44
+N#define CDC_SET_ATM_DATA_FORMAT                 0x50
+N#define CDC_GET_ATM_DEVICE_STATISTICS           0x51
+N#define CDC_SET_ATM_DEFAULT_VC                  0x52
+N#define CDC_GET_ATM_VC_STATISTICS               0x53
+N
+N// Communication feature selector codes
+N// (usbcdc11.pdf, 6.2.2..6.2.4, Table 47)
+N#define CDC_ABSTRACT_STATE                      0x01
+N#define CDC_COUNTRY_SETTING                     0x02
+N
+N// Feature Status returned for ABSTRACT_STATE Selector
+N// (usbcdc11.pdf, 6.2.3, Table 48)
+N#define CDC_IDLE_SETTING                        (1 << 0)
+N#define CDC_DATA_MULTPLEXED_STATE               (1 << 1)
+N
+N
+N// Control signal bitmap values for the SetControlLineState request
+N// (usbcdc11.pdf, 6.2.14, Table 51)
+N#define CDC_DTE_PRESENT                         (1 << 0)
+N#define CDC_ACTIVATE_CARRIER                    (1 << 1)
+N
+N// CDC class-specific notification codes
+N// (usbcdc11.pdf, 6.3, Table 68)
+N// see Table 67 for Info about class-specific notifications
+N#define CDC_NOTIFICATION_NETWORK_CONNECTION     0x00
+N#define CDC_RESPONSE_AVAILABLE                  0x01
+N#define CDC_AUX_JACK_HOOK_STATE                 0x08
+N#define CDC_RING_DETECT                         0x09
+N#define CDC_NOTIFICATION_SERIAL_STATE           0x20
+N#define CDC_CALL_STATE_CHANGE                   0x28
+N#define CDC_LINE_STATE_CHANGE                   0x29
+N#define CDC_CONNECTION_SPEED_CHANGE             0x2A
+N
+N// UART state bitmap values (Serial state notification).
+N// (usbcdc11.pdf, 6.3.5, Table 69)
+N#define CDC_SERIAL_STATE_OVERRUN                (1 << 6)  // receive data overrun error has occurred
+N#define CDC_SERIAL_STATE_PARITY                 (1 << 5)  // parity error has occurred
+N#define CDC_SERIAL_STATE_FRAMING                (1 << 4)  // framing error has occurred
+N#define CDC_SERIAL_STATE_RING                   (1 << 3)  // state of ring signal detection
+N#define CDC_SERIAL_STATE_BREAK                  (1 << 2)  // state of break detection
+N#define CDC_SERIAL_STATE_TX_CARRIER             (1 << 1)  // state of transmission carrier
+N#define CDC_SERIAL_STATE_RX_CARRIER             (1 << 0)  // state of receiver carrier
+N
+N
+N/*----------------------------------------------------------------------------
+N *      Structures  based on usbcdc11.pdf (www.usb.org)
+N *---------------------------------------------------------------------------*/
+N
+N// Header functional descriptor
+N// (usbcdc11.pdf, 5.2.3.1)
+N// This header must precede any list of class-specific descriptors.
+N
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _CDC_HEADER_DESCRIPTOR{
+N#elif defined (  __GNUC__  )
+Stypedef struct __packed  _CDC_HEADER_DESCRIPTOR{
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _CDC_HEADER_DESCRIPTOR {
+N#endif
+N  uint8_t bFunctionLength;                     // size of this descriptor in bytes
+N  uint8_t bDescriptorType;                     // CS_INTERFACE descriptor type
+N  uint8_t bDescriptorSubtype;                  // Header functional descriptor subtype
+N  uint16_t bcdCDC;                              // USB CDC specification release version
+N} CDC_HEADER_DESCRIPTOR;
+N
+N//Call management functional descriptor
+N// (usbcdc11.pdf, 5.2.3.2)
+N// Describes the processing of calls for the communication class interface.
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _CDC_CALL_MANAGEMENT_DESCRIPTOR{
+N#elif defined (  __GNUC__  )
+Stypedef struct __packed  _CDC_CALL_MANAGEMENT_DESCRIPTOR{
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _CDC_CALL_MANAGEMENT_DESCRIPTOR {
+N#endif
+N  uint8_t bFunctionLength;                     // size of this descriptor in bytes
+N  uint8_t bDescriptorType;                     // CS_INTERFACE descriptor type
+N  uint8_t bDescriptorSubtype;                  // call management functional descriptor subtype
+N  uint8_t bmCapabilities;                      // capabilities that this configuration supports
+N  uint8_t bDataInterface;                      // interface number of the data class interface used for call management (optional)
+N} CDC_CALL_MANAGEMENT_DESCRIPTOR;
+N
+N// Abstract control management functional descriptor
+N// (usbcdc11.pdf, 5.2.3.3)
+N// Describes the command supported by the communication interface class with the Abstract Control Model subclass code.
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _CDC_ABSTRACT_CONTROL_MANAGEMENT_DESCRIPTOR{
+N#elif defined (  __GNUC__  )
+Stypedef struct __packed  _CDC_ABSTRACT_CONTROL_MANAGEMENT_DESCRIPTOR{
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _CDC_ABSTRACT_CONTROL_MANAGEMENT_DESCRIPTOR {
+N#endif
+N  uint8_t bFunctionLength;                     // size of this descriptor in bytes
+N  uint8_t bDescriptorType;                     // CS_INTERFACE descriptor type
+N  uint8_t bDescriptorSubtype;                  // abstract control management functional descriptor subtype
+N  uint8_t bmCapabilities;                      // capabilities supported by this configuration
+N} CDC_ABSTRACT_CONTROL_MANAGEMENT_DESCRIPTOR;
+N
+N// Union functional descriptors
+N// (usbcdc11.pdf, 5.2.3.8)
+N// Describes the relationship between a group of interfaces that can be considered to form a functional unit.
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _CDC_UNION_DESCRIPTOR{
+N#elif defined (  __GNUC__  )
+Stypedef struct __packed  _CDC_UNION_DESCRIPTOR{
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _CDC_UNION_DESCRIPTOR {
+N#endif
+N  uint8_t bFunctionLength;                     // size of this descriptor in bytes
+N  uint8_t bDescriptorType;                     // CS_INTERFACE descriptor type
+N  uint8_t bDescriptorSubtype;                  // union functional descriptor subtype
+N  uint8_t bMasterInterface;                    // interface number designated as master
+N} CDC_UNION_DESCRIPTOR;
+N
+N// Union functional descriptors with one slave interface
+N// (usbcdc11.pdf, 5.2.3.8)
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _CDC_UNION_1SLAVE_DESCRIPTOR{
+N#elif defined (  __GNUC__  )
+Stypedef struct __packed  _CDC_UNION_1SLAVE_DESCRIPTOR{
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _CDC_UNION_1SLAVE_DESCRIPTOR {
+N#endif
+N  CDC_UNION_DESCRIPTOR sUnion;              // Union functional descriptor
+N  uint8_t                 bSlaveInterfaces[1]; // Slave interface 0
+N} CDC_UNION_1SLAVE_DESCRIPTOR;
+N
+N//  Line coding structure
+N//  Format of the data returned when a GetLineCoding request is received
+N// (usbcdc11.pdf, 6.2.13)
+N#if defined     (  __CC_ARM  )
+X#if 1L
+Ntypedef __packed struct _CDC_LINE_CODING{
+N#elif defined (  __GNUC__  )
+Stypedef struct __packed  _CDC_LINE_CODING{
+S#elif defined   (  __IAR_SYSTEMS_ICC__  )
+S#pragma pack(1)
+Stypedef struct _CDC_LINE_CODING {
+N#endif
+N  uint32_t dwDTERate;                          // Data terminal rate in bits per second
+N  uint8_t  bCharFormat;                        // Number of stop bits
+N  uint8_t  bParityType;                        // Parity bit type
+N  uint8_t  bDataBits;                          // Number of data bits
+N} CDC_LINE_CODING;
+N
+N// Notification header
+N// Data sent on the notification endpoint must follow this header.
+N// see  USB_SETUP_PACKET in file usb.h
+Ntypedef USB_SETUP_PACKET CDC_NOTIFICATION_HEADER;
+N
+N#endif /* __CDC_H */
+N
+L 25 "Lib\Usb_Drivers\Src\usbdesc.c" 2
+N#include "usbcfg.h"
+L 1 ".\Lib\Usb_Drivers\Inc\usbcfg.h" 1
+N/*----------------------------------------------------------------------------
+N *      U S B  -  K e r n e l
+N *----------------------------------------------------------------------------
+N * Name:    usbcfg.h
+N * Purpose: USB Custom Configuration
+N * Version: V1.20
+N *----------------------------------------------------------------------------
+N *      This software is supplied "AS IS" without any warranties, express,
+N *      implied or statutory, including but not limited to the implied
+N *      warranties of fitness for purpose, satisfactory quality and
+N *      noninfringement. Keil extends you a royalty-free right to reproduce
+N *      and distribute executable files created using this software for use
+N *      on NXP Semiconductors LPC family microcontroller devices only. Nothing 
+N *      else gives you the right to use this software.
+N *
+N * Copyright (c) 2009 Keil - An ARM Company. All rights reserved.
+N *----------------------------------------------------------------------------
+N * History:
+N *          V1.20 Added vendor specific support
+N *          V1.00 Initial Version
+N *---------------------------------------------------------------------------*/
+N
+N#ifndef __USBCFG_H__
+N#define __USBCFG_H__
+N
+N
+N//*** <<< Use Configuration Wizard in Context Menu >>> ***
+N
+N
+N/*
+N// <h> USB Configuration
+N//   <o0> USB Power
+N//        <i> Default Power Setting
+N//        <0=> Bus-powered
+N//        <1=> Self-powered
+N//   <o1> Max Number of Interfaces <1-256>
+N//   <o2> Max Number of Endpoints  <1-32>
+N//   <o3> Max Endpoint 0 Packet Size
+N//        <8=> 8 Bytes <16=> 16 Bytes <32=> 32 Bytes <64=> 64 Bytes
+N//   <e4> DMA Transfer
+N//     <i> Use DMA for selected Endpoints
+N//     <o5.0>  Endpoint 0 Out
+N//     <o5.1>  Endpoint 0 In
+N//     <o5.2>  Endpoint 1 Out
+N//     <o5.3>  Endpoint 1 In
+N//     <o5.4>  Endpoint 2 Out
+N//     <o5.5>  Endpoint 2 In
+N//     <o5.6>  Endpoint 3 Out
+N//     <o5.7>  Endpoint 3 In
+N//     <o5.8>  Endpoint 4 Out
+N//     <o5.9>  Endpoint 4 In
+N//     <o5.10> Endpoint 5 Out
+N//     <o5.11> Endpoint 5 In
+N//     <o5.12> Endpoint 6 Out
+N//     <o5.13> Endpoint 6 In
+N//     <o5.14> Endpoint 7 Out
+N//     <o5.15> Endpoint 7 In
+N//     <o5.16> Endpoint 8 Out
+N//     <o5.17> Endpoint 8 In
+N//     <o5.18> Endpoint 9 Out
+N//     <o5.19> Endpoint 9 In
+N//     <o5.20> Endpoint 10 Out
+N//     <o5.21> Endpoint 10 In
+N//     <o5.22> Endpoint 11 Out
+N//     <o5.23> Endpoint 11 In
+N//     <o5.24> Endpoint 12 Out
+N//     <o5.25> Endpoint 12 In
+N//     <o5.26> Endpoint 13 Out
+N//     <o5.27> Endpoint 13 In
+N//     <o5.28> Endpoint 14 Out
+N//     <o5.29> Endpoint 14 In
+N//     <o5.30> Endpoint 15 Out
+N//     <o5.31> Endpoint 15 In
+N//   </e>
+N// </h>
+N*/
+N
+N#define USB_POWER           0
+N#define USB_IF_NUM          4
+N#define USB_EP_NUM          32
+N#define USB_MAX_PACKET0     8
+N#define USB_DMA             0
+N#define USB_DMA_EP          0x00000000
+N
+N
+N/*
+N// <h> USB Event Handlers
+N//   <h> Device Events
+N//     <o0.0> Power Event
+N//     <o1.0> Reset Event
+N//     <o2.0> Suspend Event
+N//     <o3.0> Resume Event
+N//     <o4.0> Remote Wakeup Event
+N//     <o5.0> Start of Frame Event
+N//     <o6.0> Error Event
+N//   </h>
+N//   <h> Endpoint Events
+N//     <o7.0>  Endpoint 0 Event
+N//     <o7.1>  Endpoint 1 Event
+N//     <o7.2>  Endpoint 2 Event
+N//     <o7.3>  Endpoint 3 Event
+N//     <o7.4>  Endpoint 4 Event
+N//     <o7.5>  Endpoint 5 Event
+N//     <o7.6>  Endpoint 6 Event
+N//     <o7.7>  Endpoint 7 Event
+N//     <o7.8>  Endpoint 8 Event
+N//     <o7.9>  Endpoint 9 Event
+N//     <o7.10> Endpoint 10 Event
+N//     <o7.11> Endpoint 11 Event
+N//     <o7.12> Endpoint 12 Event
+N//     <o7.13> Endpoint 13 Event
+N//     <o7.14> Endpoint 14 Event
+N//     <o7.15> Endpoint 15 Event
+N//   </h>
+N//   <h> USB Core Events
+N//     <o8.0>  Set Configuration Event
+N//     <o9.0>  Set Interface Event
+N//     <o10.0> Set/Clear Feature Event
+N//   </h>
+N// </h>
+N*/
+N
+N#define USB_POWER_EVENT     0
+N#define USB_RESET_EVENT     1
+N#define USB_SUSPEND_EVENT   0
+N#define USB_RESUME_EVENT    0
+N#define USB_WAKEUP_EVENT    0
+N#define USB_SOF_EVENT       0
+N#define USB_ERROR_EVENT     0
+N#define USB_EP_EVENT        0x0007
+N#define USB_CONFIGURE_EVENT 1
+N#define USB_INTERFACE_EVENT 0
+N#define USB_FEATURE_EVENT   0
+N
+N
+N/*
+N// <e0> USB Class Support
+N//   <i> enables USB Class specific Requests
+N//   <e1> Human Interface Device (HID)
+N//     <o2> Interface Number <0-255>
+N//   </e>
+N//   <e3> Mass Storage
+N//     <o4> Interface Number <0-255>
+N//   </e>
+N//   <e5> Audio Device
+N//     <o6> Control Interface Number <0-255>
+N//     <o7> Streaming Interface 1 Number <0-255>
+N//     <o8> Streaming Interface 2 Number <0-255>
+N//   </e>
+N//   <e9> Communication Device
+N//     <o10> Control Interface Number <0-255>
+N//     <o11> Bulk Interface Number <0-255>
+N//     <o12> Max Communication Device Buffer Size
+N//        <8=> 8 Bytes <16=> 16 Bytes <32=> 32 Bytes <64=> 64 Bytes 
+N//   </e>
+N// </e>
+N*/
+N
+N#define USB_CLASS           1
+N#define USB_HID             0
+N#define USB_HID_IF_NUM      0
+N#define USB_MSC             0
+N#define USB_MSC_IF_NUM      0
+N#define USB_AUDIO           0
+N#define USB_ADC_CIF_NUM     0
+N#define USB_ADC_SIF1_NUM    1
+N#define USB_ADC_SIF2_NUM    2
+N#define USB_CDC  			1
+N#define USB_CDC_CIF_NUM     0
+N#define USB_CDC_DIF_NUM     1
+N#define USB_CDC_BUFSIZE     64
+N
+N/*
+N// <e0> USB Vendor Support
+N//   <i> enables USB Vendor specific Requests
+N// </e>
+N*/
+N#define USB_VENDOR          0
+N
+N
+N#endif  /* __USBCFG_H__ */
+L 26 "Lib\Usb_Drivers\Src\usbdesc.c" 2
+N#include "usbdesc.h"
+L 1 ".\Lib\Usb_Drivers\Inc\usbdesc.h" 1
+N/*----------------------------------------------------------------------------
+N *      U S B  -  K e r n e l
+N *----------------------------------------------------------------------------
+N * Name:    usbdesc.h
+N * Purpose: USB Descriptors Definitions
+N * Version: V1.20
+N *----------------------------------------------------------------------------
+N *      This software is supplied "AS IS" without any warranties, express,
+N *      implied or statutory, including but not limited to the implied
+N *      warranties of fitness for purpose, satisfactory quality and
+N *      noninfringement. Keil extends you a royalty-free right to reproduce
+N *      and distribute executable files created using this software for use
+N *      on NXP Semiconductors LPC microcontroller devices only. Nothing else 
+N *      gives you the right to use this software.
+N *
+N * Copyright (c) 2009 Keil - An ARM Company. All rights reserved.
+N *---------------------------------------------------------------------------*/
+N
+N#ifndef __USBDESC_H__
+N#define __USBDESC_H__
+N
+N
+N#define WBVAL(x) (x & 0xFF),((x >> 8) & 0xFF)
+N
+N#define USB_DEVICE_DESC_SIZE        (sizeof(USB_DEVICE_DESCRIPTOR))
+N#define USB_CONFIGUARTION_DESC_SIZE (sizeof(USB_CONFIGURATION_DESCRIPTOR))
+N#define USB_INTERFACE_DESC_SIZE     (sizeof(USB_INTERFACE_DESCRIPTOR))
+N#define USB_ENDPOINT_DESC_SIZE      (sizeof(USB_ENDPOINT_DESCRIPTOR))
+N
+Nextern const uint8_t USB_DeviceDescriptor[];
+Nextern const uint8_t USB_ConfigDescriptor[];
+Nextern const uint8_t USB_StringDescriptor[];
+N
+N
+N#endif  /* __USBDESC_H__ */
+L 27 "Lib\Usb_Drivers\Src\usbdesc.c" 2
+N
+N
+N/* USB Standard Device Descriptor */
+Nconst uint8_t USB_DeviceDescriptor[] = {
+N  USB_DEVICE_DESC_SIZE,              /* bLength */
+X  (sizeof(USB_DEVICE_DESCRIPTOR)),               
+N  USB_DEVICE_DESCRIPTOR_TYPE,        /* bDescriptorType */
+X  1,         
+N  WBVAL(0x0200), /* 2.0 */           /* bcdUSB */
+X  (0x0200 & 0xFF),((0x0200 >> 8) & 0xFF),              
+N  USB_DEVICE_CLASS_COMMUNICATIONS,   /* bDeviceClass CDC*/
+X  0x02,    
+N  0x00,                              /* bDeviceSubClass */
+N  0x00,                              /* bDeviceProtocol */
+N  USB_MAX_PACKET0,                   /* bMaxPacketSize0 */
+X  8,                    
+N  WBVAL(0x1FC9),                     /* idVendor */
+X  (0x1FC9 & 0xFF),((0x1FC9 >> 8) & 0xFF),                      
+N  WBVAL(0x2002),                     /* idProduct */
+X  (0x2002 & 0xFF),((0x2002 >> 8) & 0xFF),                      
+N  WBVAL(0x0100), /* 1.00 */          /* bcdDevice */
+X  (0x0100 & 0xFF),((0x0100 >> 8) & 0xFF),             
+N  0x01,                              /* iManufacturer */
+N  0x02,                              /* iProduct */
+N  0x03,                              /* iSerialNumber */
+N  0x01                               /* bNumConfigurations: one possible configuration*/
+N};
+N
+N/* USB Configuration Descriptor */
+N/*   All Descriptors (Configuration, Interface, Endpoint, Class, Vendor */
+Nconst uint8_t USB_ConfigDescriptor[] = {
+N/* Configuration 1 */
+N  USB_CONFIGUARTION_DESC_SIZE,       /* bLength */
+X  (sizeof(USB_CONFIGURATION_DESCRIPTOR)),        
+N  USB_CONFIGURATION_DESCRIPTOR_TYPE, /* bDescriptorType */
+X  2,  
+N  WBVAL(                             /* wTotalLength */
+N    1*USB_CONFIGUARTION_DESC_SIZE +
+N    1*USB_INTERFACE_DESC_SIZE     +  /* communication interface */
+N    0x0013                        +  /* CDC functions */
+N    1*USB_ENDPOINT_DESC_SIZE      +  /* interrupt endpoint */
+N    1*USB_INTERFACE_DESC_SIZE     +  /* data interface */
+N    2*USB_ENDPOINT_DESC_SIZE         /* bulk endpoints */
+N      ),
+X  (1*(sizeof(USB_CONFIGURATION_DESCRIPTOR)) + 1*(sizeof(USB_INTERFACE_DESCRIPTOR)) + 0x0013 + 1*(sizeof(USB_ENDPOINT_DESCRIPTOR)) + 1*(sizeof(USB_INTERFACE_DESCRIPTOR)) + 2*(sizeof(USB_ENDPOINT_DESCRIPTOR)) & 0xFF),((1*(sizeof(USB_CONFIGURATION_DESCRIPTOR)) + 1*(sizeof(USB_INTERFACE_DESCRIPTOR)) + 0x0013 + 1*(sizeof(USB_ENDPOINT_DESCRIPTOR)) + 1*(sizeof(USB_INTERFACE_DESCRIPTOR)) + 2*(sizeof(USB_ENDPOINT_DESCRIPTOR)) >> 8) & 0xFF),
+N  0x02,                              /* bNumInterfaces */
+N  0x01,                              /* bConfigurationValue: 0x01 is used to select this configuration */
+N  0x00,                              /* iConfiguration: no string to describe this configuration */
+N  USB_CONFIG_BUS_POWERED /*|*/       /* bmAttributes */
+X  0x80          
+N/*USB_CONFIG_REMOTE_WAKEUP*/,
+N  USB_CONFIG_POWER_MA(100),          /* bMaxPower, device power consumption is 100 mA */
+X  ((100)/2),           
+N/* Interface 0, Alternate Setting 0, Communication class interface descriptor */
+N  USB_INTERFACE_DESC_SIZE,           /* bLength */
+X  (sizeof(USB_INTERFACE_DESCRIPTOR)),            
+N  USB_INTERFACE_DESCRIPTOR_TYPE,     /* bDescriptorType */
+X  4,      
+N  USB_CDC_CIF_NUM,                   /* bInterfaceNumber: Number of Interface */
+X  0,                    
+N  0x00,                              /* bAlternateSetting: Alternate setting */
+N  0x01,                              /* bNumEndpoints: One endpoint used */
+N  CDC_COMMUNICATION_INTERFACE_CLASS, /* bInterfaceClass: Communication Interface Class */
+X  0x02,  
+N  CDC_ABSTRACT_CONTROL_MODEL,        /* bInterfaceSubClass: Abstract Control Model */
+X  0x02,         
+N  0x00,                              /* bInterfaceProtocol: no protocol used */
+N  0x5E,                              /* iInterface: */
+N/*Header Functional Descriptor*/
+N  0x05,                              /* bLength: Endpoint Descriptor size */
+N  CDC_CS_INTERFACE,                  /* bDescriptorType: CS_INTERFACE */
+X  0x24,                   
+N  CDC_HEADER,                        /* bDescriptorSubtype: Header Func Desc */
+X  0x00,                         
+N  WBVAL(CDC_V1_10), /* 1.10 */       /* bcdCDC */
+X  (0x0110 & 0xFF),((0x0110 >> 8) & 0xFF),          
+N/*Call Management Functional Descriptor*/
+N  0x05,                              /* bFunctionLength */
+N  CDC_CS_INTERFACE,                  /* bDescriptorType: CS_INTERFACE */
+X  0x24,                   
+N  CDC_CALL_MANAGEMENT,               /* bDescriptorSubtype: Call Management Func Desc */
+X  0x01,                
+N  0x01,                              /* bmCapabilities: device handles call management */
+N  0x01,                              /* bDataInterface: CDC data IF ID */
+N/*Abstract Control Management Functional Descriptor*/
+N  0x04,                              /* bFunctionLength */
+N  CDC_CS_INTERFACE,                  /* bDescriptorType: CS_INTERFACE */
+X  0x24,                   
+N  CDC_ABSTRACT_CONTROL_MANAGEMENT,   /* bDescriptorSubtype: Abstract Control Management desc */
+X  0x02,    
+N  0x02,                              /* bmCapabilities: SET_LINE_CODING, GET_LINE_CODING, SET_CONTROL_LINE_STATE supported */
+N/*Union Functional Descriptor*/
+N  0x05,                              /* bFunctionLength */
+N  CDC_CS_INTERFACE,                  /* bDescriptorType: CS_INTERFACE */
+X  0x24,                   
+N  CDC_UNION,                         /* bDescriptorSubtype: Union func desc */
+X  0x06,                          
+N  USB_CDC_CIF_NUM,                   /* bMasterInterface: Communication class interface is master */
+X  0,                    
+N  USB_CDC_DIF_NUM,                   /* bSlaveInterface0: Data class interface is slave 0 */
+X  1,                    
+N/*Endpoint 1 Descriptor*/            /* event notification (optional) */
+N  USB_ENDPOINT_DESC_SIZE,            /* bLength */
+X  (sizeof(USB_ENDPOINT_DESCRIPTOR)),             
+N  USB_ENDPOINT_DESCRIPTOR_TYPE,      /* bDescriptorType */
+X  5,       
+N  USB_ENDPOINT_IN(1),                /* bEndpointAddress */
+X  ((1) | 0x80),                 
+N  USB_ENDPOINT_TYPE_INTERRUPT,       /* bmAttributes */
+X  0x03,        
+N  WBVAL(0x0010),                     /* wMaxPacketSize */
+X  (0x0010 & 0xFF),((0x0010 >> 8) & 0xFF),                      
+N  0x02,          /* 2ms */           /* bInterval */
+N/* Interface 1, Alternate Setting 0, Data class interface descriptor*/
+N  USB_INTERFACE_DESC_SIZE,           /* bLength */
+X  (sizeof(USB_INTERFACE_DESCRIPTOR)),            
+N  USB_INTERFACE_DESCRIPTOR_TYPE,     /* bDescriptorType */
+X  4,      
+N  USB_CDC_DIF_NUM,                   /* bInterfaceNumber: Number of Interface */
+X  1,                    
+N  0x00,                              /* bAlternateSetting: no alternate setting */
+N  0x02,                              /* bNumEndpoints: two endpoints used */
+N  CDC_DATA_INTERFACE_CLASS,          /* bInterfaceClass: Data Interface Class */
+X  0x0A,           
+N  0x00,                              /* bInterfaceSubClass: no subclass available */
+N  0x00,                              /* bInterfaceProtocol: no protocol used */
+N  0x5E,                              /* iInterface: */
+N/* Endpoint, EP2 Bulk Out */
+N  USB_ENDPOINT_DESC_SIZE,            /* bLength */
+X  (sizeof(USB_ENDPOINT_DESCRIPTOR)),             
+N  USB_ENDPOINT_DESCRIPTOR_TYPE,      /* bDescriptorType */
+X  5,       
+N  USB_ENDPOINT_OUT(2),               /* bEndpointAddress */
+X  ((2) | 0x00),                
+N  USB_ENDPOINT_TYPE_BULK,            /* bmAttributes */
+X  0x02,             
+N  WBVAL(USB_CDC_BUFSIZE),            /* wMaxPacketSize */
+X  (64 & 0xFF),((64 >> 8) & 0xFF),             
+N  0x00,                              /* bInterval: ignore for Bulk transfer */
+N/* Endpoint, EP2 Bulk In */
+N  USB_ENDPOINT_DESC_SIZE,            /* bLength */
+X  (sizeof(USB_ENDPOINT_DESCRIPTOR)),             
+N  USB_ENDPOINT_DESCRIPTOR_TYPE,      /* bDescriptorType */
+X  5,       
+N  USB_ENDPOINT_IN(2),                /* bEndpointAddress */
+X  ((2) | 0x80),                 
+N  USB_ENDPOINT_TYPE_BULK,            /* bmAttributes */
+X  0x02,             
+N  WBVAL(USB_CDC_BUFSIZE),            /* wMaxPacketSize */
+X  (64 & 0xFF),((64 >> 8) & 0xFF),             
+N  0x00,                              /* bInterval: ignore for Bulk transfer */
+N/* Terminator */
+N  0                                  /* bLength */
+N};
+N
+N
+N
+N
+N/* USB String Descriptor (optional) */
+Nconst uint8_t USB_StringDescriptor[] = {
+N/* Index 0x00: LANGID Codes */
+N  0x04,                              /* bLength */
+N  USB_STRING_DESCRIPTOR_TYPE,        /* bDescriptorType */
+X  3,         
+N  WBVAL(0x0409), /* US English */    /* wLANGID */
+X  (0x0409 & 0xFF),((0x0409 >> 8) & 0xFF),       
+N/* Index 0x01: Manufacturer */
+N  (13*2 + 2),                        /* bLength (13 Char + Type + lenght) */
+N  USB_STRING_DESCRIPTOR_TYPE,        /* bDescriptorType */
+X  3,         
+N  'N',0,
+N  'X',0,
+N  'P',0,
+N  ' ',0,
+N  'S',0,
+N  'E',0,
+N  'M',0,
+N  'I',0,
+N  'C',0,
+N  'O',0,
+N  'N',0,
+N  'D',0,
+N  ' ',0,
+N/* Index 0x02: Product */
+N  (17*2 + 2),                        /* bLength ( 17 Char + Type + lenght) */
+N  USB_STRING_DESCRIPTOR_TYPE,        /* bDescriptorType */
+X  3,         
+N  'N',0,
+N  'X',0,
+N  'P',0,
+N  ' ',0,
+N  'L',0,
+N  'P',0,
+N  'C',0,
+N  '1',0,
+N  '7',0,
+N  'x',0,
+N  'x',0,
+N  ' ',0,
+N  'V',0,
+N  'C',0,
+N  'O',0,
+N  'M',0,
+N  ' ',0,
+N/* Index 0x03: Serial Number */
+N  (12*2 + 2),                        /* bLength (12 Char + Type + lenght) */
+N  USB_STRING_DESCRIPTOR_TYPE,        /* bDescriptorType */
+X  3,         
+N  'D',0,
+N  'E',0,
+N  'M',0,
+N  'O',0,
+N  '0',0,
+N  '0',0,
+N  '0',0,
+N  '0',0,
+N  '0',0,
+N  '0',0,
+N  '0',0,
+N  '0',0,
+N/* Index 0x04: Interface 0, Alternate Setting 0 */
+N  ( 4*2 + 2),                        /* bLength (4 Char + Type + lenght) */
+N  USB_STRING_DESCRIPTOR_TYPE,        /* bDescriptorType */
+X  3,         
+N  'V',0,
+N  'C',0,
+N  'O',0,
+N  'M',0,
+N};

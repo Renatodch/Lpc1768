@@ -1,0 +1,15 @@
+.\flash\config.o: Src\Config.c
+.\flash\config.o: .\Inc\Config.h
+.\flash\config.o: .\Inc\main.h
+.\flash\config.o: C:\Keil_v5\ARM\INC\NXP\LPC17xx\LPC17xx.h
+.\flash\config.o: C:\Keil_v5\ARM\CMSIS\Include\core_cm3.h
+.\flash\config.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\flash\config.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmInstr.h
+.\flash\config.o: C:\Keil_v5\ARM\CMSIS\Include\core_cmFunc.h
+.\flash\config.o: C:\Keil_v5\ARM\INC\NXP\LPC17xx\system_LPC17xx.h
+.\flash\config.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\flash\config.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\flash\config.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdarg.h
+.\flash\config.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\flash\config.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\flash\config.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

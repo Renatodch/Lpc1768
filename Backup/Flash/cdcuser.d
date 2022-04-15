@@ -1,0 +1,10 @@
+.\flash\cdcuser.o: Lib\Usb_Drivers\Src\cdcuser.c
+.\flash\cdcuser.o: .\Lib\Drivers\include\lpc_types.h
+.\flash\cdcuser.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\flash\cdcuser.o: .\Lib\Usb_Drivers\Inc\usb.h
+.\flash\cdcuser.o: .\Lib\Usb_Drivers\Inc\usbhw.h
+.\flash\cdcuser.o: .\Lib\Usb_Drivers\Inc\usbcfg.h
+.\flash\cdcuser.o: .\Lib\Usb_Drivers\Inc\usbcore.h
+.\flash\cdcuser.o: .\Lib\Usb_Drivers\Inc\cdc.h
+.\flash\cdcuser.o: .\Lib\Usb_Drivers\Inc\cdcuser.h
+.\flash\cdcuser.o: .\Lib\Usb_Drivers\Inc\uart.h

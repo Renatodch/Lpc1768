@@ -1,0 +1,57 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.25.2.0
+Copyright (C) 2018 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Renato Del Castillo, Renato, LIC=KRMHL-024RX-M96GG-VXLLM-AYNS9-Q5VGM
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Plus  Version: 5.25.2.0
+Toolchain Path:  C:\Keil_v5\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 6 (build 750)
+Assembler:       Armasm.exe V5.06 update 6 (build 750)
+Linker/Locator:  ArmLink.exe V5.06 update 6 (build 750)
+Library Manager: ArmAr.exe V5.06 update 6 (build 750)
+Hex Converter:   FromElf.exe V5.06 update 6 (build 750)
+CPU DLL:         SARMCM3.DLL V5.25.2.0
+Dialog DLL:      DARMP1.DLL V1.27.0.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.1.0
+Dialog DLL:      TARMP1.DLL V1.26.0.0
+ 
+<h2>Project:</h2>
+E:\Keil_Workbench\LPC\Tesis\Servocontroller\ByRenato.uvproj
+Project File Date:  06/25/2018
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 6 (build 750)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
+Build target 'LPC17xx'
+compiling Peripheral.c...
+compiling main.c...
+compiling LPC17xx_it.c...
+compiling Handlers.c...
+compiling User.c...
+compiling Dev.c...
+compiling build_time.c...
+linking...
+Program Size: Code=20272 RO-data=1048 RW-data=156 ZI-data=5284  
+FromELF: creating hex file...
+After Build - User command #1: C:\Keil_v5\ARM\ARMCC\bin\fromelf.exe --bin --output=ByRenato.bin .\Flash\ByRenato.axf
+After Build - User command #2: .\Utilities\Run_Get_time.bat
+E:\Keil_Workbench\LPC\Tesis\Servocontroller>perl Utilities\Get_time_PT.pl src\build_time.c inc\build_time.h 
+Begin to generate files!
+Current System Time: 2018/07/26 09:37:34.
+Version: "Servocontroller".
+src\build_time.c and inc\build_time.h generated Finished!
+LOADING...
+.\ByRenato.bin
+1 archivo(s) copiado(s)
+-----------------------------------     
+Succesful Compilation!, Code loaded
+-----------------------------------  
+".\Flash\ByRenato.axf" - 0 Error(s), 0 Warning(s).
+Build Time Elapsed:  00:00:03
+</pre>
+</body>
+</html>

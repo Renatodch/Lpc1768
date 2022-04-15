@@ -1,0 +1,11 @@
+.\flash\usbcore_1.o: Lib\Usb_Drivers\Src\usbcore.c
+.\flash\usbcore_1.o: .\Lib\Drivers\include\lpc_types.h
+.\flash\usbcore_1.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\flash\usbcore_1.o: .\Lib\Usb_Drivers\Inc\usb.h
+.\flash\usbcore_1.o: .\Lib\Usb_Drivers\Inc\usbcfg.h
+.\flash\usbcore_1.o: .\Lib\Usb_Drivers\Inc\usbhw.h
+.\flash\usbcore_1.o: .\Lib\Usb_Drivers\Inc\usbcore.h
+.\flash\usbcore_1.o: .\Lib\Usb_Drivers\Inc\usbdesc.h
+.\flash\usbcore_1.o: .\Lib\Usb_Drivers\Inc\usbuser.h
+.\flash\usbcore_1.o: .\Lib\Usb_Drivers\Inc\cdc.h
+.\flash\usbcore_1.o: .\Lib\Usb_Drivers\Inc\cdcuser.h
